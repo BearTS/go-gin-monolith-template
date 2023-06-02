@@ -1,0 +1,41 @@
+version: '3'
+services:
+  psql:
+    container_name: psql
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    networks:
+      - dev_network
+
+  redis:
+      image: redis
+      container_name: redis
+      restart: always
+      ports:
+        - 6379:6379
+      networks:
+        - default
+
+  # backend:
+  #   container_name: backend
+  #   build: .
+  #   restart: always
+  #   ports:
+  #     - "3000:8080"
+  #   depends_on:
+  #     - psql
+  #     - redis
+  #   env_file:
+  #     - .env
+  #   networks:
+  #     - dev_network
+      
+
+networks:
+  dev_network:

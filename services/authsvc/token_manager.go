@@ -22,7 +22,7 @@ func (t *authSvcImpl) CreateToken(tokenAuthData models.AuthData) (*TokenDetails,
 
 	// set authdata
 	tokenAuthData.SessionPID = utils.UUIDWithPrefix(constants.Prefix.SESSION)
-	tokenAuthData.RegisteredClaims.Issuer = "tez"
+	tokenAuthData.RegisteredClaims.Issuer = "sample-issuers"
 	tokenAuthData.RegisteredClaims.IssuedAt = &jwt.NumericDate{time.Now()}
 
 	td := &TokenDetails{}
@@ -43,10 +43,10 @@ func (t *authSvcImpl) CreateToken(tokenAuthData models.AuthData) (*TokenDetails,
 
 	if tokenAuthData.AdminPID != "" {
 		atClaims["admin_pid"] = tokenAuthData.AdminPID
-	}
-
-	if tokenAuthData.UserPID != "" {
+	} else if tokenAuthData.UserPID != "" {
 		atClaims["user_pid"] = tokenAuthData.UserPID
+	} else {
+		return nil, errors.New("invalid token auth data")
 	}
 
 	at := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)

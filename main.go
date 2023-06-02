@@ -1,7 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"github.com/BearTS/go-gin-monolith/app"
+	"github.com/BearTS/go-gin-monolith/config"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+	config.LoadConfigs()
+	app.App()
 }

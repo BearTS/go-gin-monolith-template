@@ -1,9 +1,9 @@
 package constants
 
 var TokenTypes = struct {
-	User  string
-	Admin string
+	USER  string
+	ADMIN string
 }{
-	User:  "user",
-	Admin: "admin",
+	USER:  "user",
+	ADMIN: "admin",
 }

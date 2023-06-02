@@ -20,7 +20,7 @@ func (g *authSvcImpl) GenerateToken(c *gin.Context, req TokenReq) (utils.BaseRes
 
 	switch req.Type {
 
-	case constants.TokenTypes.User:
+	case constants.TokenTypes.USER:
 		{
 			baseRes, res, err := g.userTokenGeneration(c, req)
 			if err != nil {
@@ -28,7 +28,7 @@ func (g *authSvcImpl) GenerateToken(c *gin.Context, req TokenReq) (utils.BaseRes
 			}
 			return baseRes, res, err
 		}
-	case constants.TokenTypes.Admin:
+	case constants.TokenTypes.ADMIN:
 		{
 			baseRes, res, err := g.adminTokenGeneration(c, req)
 			if err != nil {
@@ -97,7 +97,7 @@ func (g *authSvcImpl) adminTokenGeneration(c *gin.Context, req TokenReq) (utils.
 	gormDB, _ := database.Connection()
 	adminGorm := admin.Gorm(gormDB)
 
-	adminData, err := adminGorm.GetRunnerByPID(c, req.UserID)
+	adminData, err := adminGorm.GetAdminByPID(c, req.UserID)
 	if err != nil {
 		return baseRes, res, errors.Wrap(err, "[onboardingTokenGeneration][GetUserDetailsByPID]")
 	}
