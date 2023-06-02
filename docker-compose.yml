@@ -22,19 +22,19 @@ services:
       networks:
         - default
 
-  # backend:
-  #   container_name: backend
-  #   build: .
-  #   restart: always
-  #   ports:
-  #     - "3000:8080"
-  #   depends_on:
-  #     - psql
-  #     - redis
-  #   env_file:
-  #     - .env
-  #   networks:
-  #     - dev_network
+  backend:
+    container_name: backend
+    build: .
+    restart: always
+    ports:
+      - "3000:8080"
+    depends_on:
+      - psql
+      - redis
+    env_file:
+      - .env
+    networks:
+      - dev_network
       
 
 networks:
