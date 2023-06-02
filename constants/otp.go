@@ -17,3 +17,5 @@ var OtpStatuses = struct {
 	EXPIRED:  "expired",
 	FAILED:   "failed",
 }
+
+var OTP_MAX_RETRY = 3

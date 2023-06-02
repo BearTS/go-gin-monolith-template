@@ -2,8 +2,10 @@ package usersvc
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/BearTS/go-gin-monolith/constants"
 	"github.com/BearTS/go-gin-monolith/database/tables"
@@ -39,6 +41,14 @@ func (g *UserSvcImpl) ResendOTP(c *gin.Context, req ResendOTPReq) (utils.BaseRes
 		return baseRes, res, err
 	}
 
+	// Check if created at is more than 24 hours
+	// ! Need testing
+	if otp.VerificationRetryCount >= constants.OTP_MAX_RETRY && otp.CreatedAt.Add(24*time.Hour).After(time.Now()) {
+		baseRes.StatusCode = http.StatusConflict
+		baseRes.Message = "OTP retry limit exceeded"
+		return baseRes, res, err
+	}
+
 	// Update the existing otp
 	otp.OtpStatus = constants.OtpStatuses.EXPIRED
 	otp, err = g.otpVerificationGorm.UpdateOtpVerification(c, otp)
@@ -46,14 +56,16 @@ func (g *UserSvcImpl) ResendOTP(c *gin.Context, req ResendOTPReq) (utils.BaseRes
 		return baseRes, res, err
 	}
 
+	fmt.Println("OTP: ", otp)
 	// generate new otp
 	otpValue := utils.GenerateOtp(6)
 
 	var otpVerification tables.OtpVerifications
 	otpVerification.OtpValue = otpValue
 	otpVerification.UserPID = res.PID
-	otpVerification.OtpType = "email"
+	otpVerification.OtpType = constants.OtpTypes.EMAIL
 	otpVerification.OtpStatus = constants.OtpStatuses.PENDING
+	otpVerification.VerificationRetryCount = otp.VerificationRetryCount + 1
 
 	_, err = g.otpVerificationGorm.CreateNewOTPVerification(c, otpVerification)
 

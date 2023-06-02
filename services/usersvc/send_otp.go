@@ -43,7 +43,7 @@ func (g *UserSvcImpl) SendOTP(c *gin.Context, req SendOTPReq) (utils.BaseRespons
 		var otpVerification tables.OtpVerifications
 		otpVerification.OtpValue = otp
 		otpVerification.UserPID = res.PID
-		otpVerification.OtpType = "email"
+		otpVerification.OtpType = constants.OtpTypes.EMAIL
 		otpVerification.OtpStatus = constants.OtpStatuses.PENDING
 
 		_, err = g.otpVerificationGorm.CreateNewOTPVerification(c, otpVerification)
@@ -86,7 +86,7 @@ func (g *UserSvcImpl) SendOTP(c *gin.Context, req SendOTPReq) (utils.BaseRespons
 	var otpVerification tables.OtpVerifications
 	otpVerification.UserPID = res.PID
 	otpVerification.OtpValue = otp
-	otpVerification.OtpType = "email"
+	otpVerification.OtpType = constants.OtpTypes.EMAIL
 	otpVerification.OtpStatus = constants.OtpStatuses.PENDING
 
 	_, err = g.otpVerificationGorm.CreateNewOTPVerification(c, otpVerification)
