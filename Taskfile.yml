@@ -1,0 +1,13 @@
+version: '3'
+
+tasks:
+  default:
+    cmds:
+    - task --list-all
+  build:
+    cmds:
+    - go build -o bin/main main.go
+    - chmod +x bin/main
+  run:
+    cmds:
+    - ./bin/main

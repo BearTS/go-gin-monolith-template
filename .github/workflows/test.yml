@@ -1,0 +1,63 @@
+name: Go Tests
+'on':
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: 'postgres:14'
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: testPassword
+          POSTGRES_DB: testDB
+        ports:
+          - '5432:5432'
+        options: >-
+          --health-cmd pg_isready --health-interval 10s --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis
+        ports:
+          - '6379:6379'
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 10s --health-timeout
+          5s --health-retries 5
+    steps:
+      - name: Checkout Go
+        uses: actions/checkout@v3
+        with:
+          go-version: '1.20.x'
+        id: go
+
+      - name: Set up Go 1.20.x
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20.x'
+
+      - name: Check out code into the Go module directory
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.20.x'
+
+      - name: Run migrations
+        run: >-
+          pwd && ls -la && cp example.env .env && go mod tidy && cd dbapp && go
+          run db.go migrate && go run db.go seed
+
+      - name: Install project dependencies
+        run: pwd && ls -la && cp example.env .env && go mod tidy
+
+      - name: Build
+        run: pwd && go build -v ./...
+
+      - name: Test
+        run: go test -v ./...
