@@ -1,0 +1,4 @@
+bin/*
+k8s/*
+.github/*
+example.env
